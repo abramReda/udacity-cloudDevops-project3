@@ -67,27 +67,27 @@ jobs:
           paths: [backend/node_modules]
           key: backend-build
 
-   test-frontend:
-     docker:
-       - image: circleci/node:13.8.0
-     steps:
-       - checkout
-       - restore_cach:
-           keys: [frontend-build]
-       - run:
-          name: Frontend Unit Test
-          command: |
-            cd frontend
-            npm run test
+  test-frontend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cach:
+          keys: [frontend-build]
+      - run:
+         name: Frontend Unit Test
+         command: |
+           cd frontend
+           npm run test
                
-   test-backend:
-     docker:
-       - image: circleci/node:13.8.0
-     steps:
-       - checkout
-       - restore_cach:
-           keys: [backend-build]
-       - run:
+  test-backend:
+    docker:
+      - image: circleci/node:13.8.0
+    steps:
+      - checkout
+      - restore_cach:
+          keys: [backend-build]
+      - run:
           name: Backend Unit Test
           command: |
             cd backend
