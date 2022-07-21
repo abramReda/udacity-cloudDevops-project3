@@ -137,7 +137,7 @@ jobs:
     docker:
       - image: amazon/aws-cli:latest
     steps:
-      -checkout
+      - checkout
       - install-utility
       - run:
           name: Ensure back-end infrastructure exists
