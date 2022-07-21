@@ -1,6 +1,16 @@
 version: 2.1
 
 commands:
+  install-ansible:
+    description: Installs Ansible
+    steps:
+      - run:
+          name: Install Ansible
+          command: |
+            sudo apt update
+            sudo apt install software-properties-common
+            sudo add-apt-repository --yes --update ppa:ansible/ansible
+            sudo apt install ansible -y
   install-utility:
     description: install utility to work with workspace
     steps:
@@ -169,24 +179,28 @@ jobs:
             - project/.circleci/ansible/inventory.txt
       - destroy-environment  # destroy infrastructure only when error happen
 
-#   configure-infrastructure:
-#     docker:
-#       # Docker image here that supports Ansible
-#     steps:
-#       # Checkout code from git
-#       # Add ssh keys with fingerprint
-#       # attach workspace
-#       - run:
-#           name: Install dependencies
-#           command: |
-#             # Your code here
-#             exit 1
-#       - run:
-#           name: Configure server
-#           command: |
-#             # Your code here
-#             exit 1
-#       # Here's where you will add some code to rollback on failure      
+  configure-infrastructure:
+    docker:
+      - image: cimg/python:3.10.5
+    steps:
+      - checkout
+      - add_ssh_keys:
+          fingerprints: [1f:f3:bc:ce:c6:05:8e:d3:5b:9d:34:9d:cd:44:d9:61]
+      - attach_workspace:
+          at: ~/
+      - install-ansible
+      # - run:
+      #     name: Install dependencies
+      #     command: |
+      #       # Your code here
+      #       exit 1
+      - run:
+          name: Configure server
+          command: |
+            cd .circleci/ansible
+            cat inventory.txt
+            ansible-playbook -i inventory.txt configure-server.yml
+      - destroy-environment
 
 #   run-migrations:
 #     docker:
@@ -319,8 +333,8 @@ workflows:
           filters:
             branches:
               only: [master]
-      # - configure-infrastructure:
-      #     requires: [deploy-infrastructure]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
       # - run-migrations:
       #     requires: [configure-infrastructure]
       # - deploy-frontend:
