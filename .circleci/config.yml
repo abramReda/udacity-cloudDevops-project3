@@ -1,6 +1,16 @@
 version: 2.1
 
 commands:
+  
+  install-nodejs:
+    description: Installs NodeJs 13
+    steps:
+      - run:
+          name: install Nodejs 13
+          command: |
+            curl -fsSL https://deb.nodesource.com/setup_13.x | sudo -E bash -
+            sudo apt install -y nodejs
+
   install-ansible:
     description: Installs Ansible
     steps:
@@ -267,9 +277,10 @@ jobs:
 
   deploy-backend:
     docker:
-      - image: circleci/node:13.8.0
+      - image: cimg/base:stable
     steps:
       - checkout
+      - install-nodejs
       - install-aws-cli
       - install-ansible
       - add_ssh_keys:
